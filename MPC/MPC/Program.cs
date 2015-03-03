@@ -9,75 +9,83 @@ using Nini.Config;
 
 namespace MPC
 {
+    /// <summary>
+    /// MPC helper program for use when developing the Website
+    /// </summary>
     class Program
     {
-        const string CONFIG_FILE = "Config.ini";
+        public const string CONFIG_FILE = "Config.ini";
 
-        //Configuration options!
-        static string PublishLocation = null;
-        static string SourceLocation = null;
+        //Configuration
+        private Configuration Config;
 
-        //Template locations
-        static string HeaderTemplate = null;
-        static string NavTemplate = null;
-        static string FooterTemplate = null;
-        static string ModalTemplate = null;
-
-        //List of pages to compile
-        static string[] Pages = null;
+        private string[] Commands = { "compile", "publish", "clean" };
 
 
-
+        /// <summary>
+        /// Entry point to application
+        /// </summary>
         static void Main(string[] args)
-        {   
-            string[] Commands = { "compile",
-                                  "clean",
-                                };
+        {
+            Program me = new Program();
+            me.Run();
+            Console.WriteLine("> Bye!");
+        }
 
-            LoadConfig();   //Load configuration settings
 
-            Console.Write("> ");
+        /// <summary>
+        /// Main Program loop which deals with input and dispatches to tasks
+        /// </summary>
+        private void Run()
+        {
+            //Load configuration settings and close if they are equal to null
+            Config = FileIO.LoadConfig();
+            if (Config == null) { Console.WriteLine("\n\n>> Exited with error code 0x2"); System.Environment.Exit(2); } 
+
+
+            //Enter Main Command Loop and get input from user
+            Console.Write("MPC> ");
             string[] cmd = Console.ReadLine().ToLower().Split(' ');
-         
-            
+
             //Just loop until we get a quit
             while (cmd[0] != "quit")
             {
                 if (Commands.Contains(cmd[0]) == false) { Console.WriteLine(">> Invalid command"); }
                 else
                 {
-                    switch(cmd[0])
+                    switch (cmd[0])
                     {
                         case "compile": { Compile(null); break; }
                         case "clean": { Clean(cmd); break; }
                     }
                 }
 
-
                 //Get next input
-                Console.Write("> ");
+                Console.Write("MPC> ");
                 cmd = Console.ReadLine().ToLower().Split(' ');
             }
 
         }
 
         //Compiles pages with Headers and footers
-        private static void Compile(string[] cmd)
+        private void Compile(string[] cmd)
         {
+            DateTime First = DateTime.Now;
+
             //Load in Template Text
-            string Header = LoadTemplate(SourceLocation + HeaderTemplate);
-            string Footer = LoadTemplate(SourceLocation + FooterTemplate);
-            string NavBar = LoadTemplate(SourceLocation + NavTemplate);
-            string Modals = LoadTemplate(SourceLocation + ModalTemplate);
+            string Header = FileIO.LoadHTML(Config.SourceLocation + Config.HeaderTemplate);
+            string Footer = FileIO.LoadHTML(Config.SourceLocation + Config.FooterTemplate);
+            string NavBar = FileIO.LoadHTML(Config.SourceLocation + Config.NavTemplate);
+            string Modals = FileIO.LoadHTML(Config.SourceLocation + Config.ModalTemplate);
 
-            Console.WriteLine("\t> Loaded templates");
+            Console.WriteLine("> Loaded templates");
 
 
-            for (int i = 0; i < Pages.Length; ++i)
+            for (int i = 0; i < Config.Pages.Length; ++i)
             {
-                Console.Write("\t> Page: {0}     (working)", Pages[i]);
+                Console.Write("> (working) Page: {0}", Config.Pages[i]);
 
-                string PageTitle = Pages[i].Replace(".html", "");
+                string PageTitle = Config.Pages[i].Replace(".html", "");
                 string PageNav = NavBar;
                 string PageContent = null;
 
@@ -87,7 +95,7 @@ namespace MPC
                     case "worship": { PageNav = PageNav.Replace("id=\"Worship\"", "id=\"Worship_A\""); break; }
                     case "people": { PageNav = PageNav.Replace("id=\"People\"", "id=\"People_A\""); break; }
                     case "find": { PageNav = PageNav.Replace("id=\"Contact\"", "id=\"Contact_A\""); break; }
-                   case "future": { PageNav = PageNav.Replace("id=\"Future\"", "id=\"Future_A\""); break; }
+                    case "future": { PageNav = PageNav.Replace("id=\"Future\"", "id=\"Future_A\""); break; }
 
                     //We need to do something special here and load in our modals for the Groups
                     case "groups": { 
@@ -101,62 +109,23 @@ namespace MPC
 
                 //Put the page together and save elsewhere
                 PageContent = Header + PageNav;
-                PageContent += LoadPage(SourceLocation + Pages[i]);
+                PageContent += FileIO.LoadHTML(Config.SourceLocation + Config.Pages[i]);
                 PageContent += Footer;
 
-                File.WriteAllText(PublishLocation + Pages[i], PageContent);
-                Console.Write("\r \t> Page: {0}     (DONE)                     \n", Pages[i]);
+                File.WriteAllText(Config.PublishLocation + Config.Pages[i], PageContent);
+                Console.Write("\r> (DONE) Page: {0}                          \n", Config.Pages[i]);
             }
+
+            DateTime Second = DateTime.Now;
+            TimeSpan TimeTaken = Second - First;
+
+            Console.WriteLine("> Compiled {0} page(s) in {1}ms", Config.Pages.Length, TimeTaken.TotalMilliseconds);
         }
 
 
-
-        //TODO - Do something
         private static void Clean(string[] cmd)
         {
             Console.WriteLine(">> Nothing to clean.");
-        }
-
-
-        private static void LoadConfig()
-        {
-            IniConfigSource s = new IniConfigSource(CONFIG_FILE);
-
-            //Template Sources
-            HeaderTemplate = s.Configs["Templates"].GetString("Header");
-            FooterTemplate = s.Configs["Templates"].GetString("Footer");
-            NavTemplate = s.Configs["Templates"].GetString("NavBar");
-            ModalTemplate = s.Configs["Templates"].GetString("Modal");
-
-            //Where to Publish finished products
-            PublishLocation = s.Configs["Sources"].GetString("Publish");
-
-            //Get all the pages to fix & where they are stored
-            Pages = s.Configs["Sources"].GetString("Pages").Split(',');
-            SourceLocation = s.Configs["Sources"].GetString("Source");
-
-            Console.WriteLine(">> Configuration loaded!");
-        }
-
-        //Returns a loaded Template from HTML
-        private static string LoadTemplate(string Filename)
-        {
-            string Template = "";
-            string[] Buffer = File.ReadAllLines(Filename);
-
-            foreach (string line in Buffer) { Template += line; }
-
-            return Template;
-        }
-
-        private static string LoadPage(string Filename)
-        {
-            string Page = "";
-            string[] Buffer = File.ReadAllLines(Filename);
-
-            foreach (string Line in Buffer) { Page += Line; }
-
-            return Page;
         }
 
     }
