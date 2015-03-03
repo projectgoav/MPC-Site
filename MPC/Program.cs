@@ -17,46 +17,44 @@ namespace MPC
         static string PublishLocation = null;
         static string SourceLocation = null;
 
+        //Template locations
         static string HeaderTemplate = null;
         static string NavTemplate = null;
         static string FooterTemplate = null;
+        static string ModalTemplate = null;
 
-        static string HeaderTag = null;
-        static string FooterTag = null;
-        static string LinkTag = null;
-
+        //List of pages to compile
         static string[] Pages = null;
 
 
 
         static void Main(string[] args)
         {   
-            string[] Commands = { "publish",
+            string[] Commands = { "compile",
                                   "clean",
                                 };
 
-            LoadConfig();
-
+            LoadConfig();   //Load configuration settings
 
             Console.Write("> ");
             string[] cmd = Console.ReadLine().ToLower().Split(' ');
          
-
-
+            
+            //Just loop until we get a quit
             while (cmd[0] != "quit")
             {
-                if (Commands.Contains(cmd[0]) == false) { Console.WriteLine("Invalid command"); }
+                if (Commands.Contains(cmd[0]) == false) { Console.WriteLine(">> Invalid command"); }
                 else
                 {
                     switch(cmd[0])
                     {
-                        case "publish": { Publish(cmd); break; }
+                        case "compile": { Compile(null); break; }
                         case "clean": { Clean(cmd); break; }
                     }
                 }
 
 
-
+                //Get next input
                 Console.Write("> ");
                 cmd = Console.ReadLine().ToLower().Split(' ');
             }
@@ -64,22 +62,20 @@ namespace MPC
         }
 
         //Compiles pages with Headers and footers
-
-        //TODO - Remove heading from original pages
-        //TODO - Fix NavBar styling!
-        private static void Publish(string[] cmd)
+        private static void Compile(string[] cmd)
         {
             //Load in Template Text
             string Header = LoadTemplate(SourceLocation + HeaderTemplate);
             string Footer = LoadTemplate(SourceLocation + FooterTemplate);
             string NavBar = LoadTemplate(SourceLocation + NavTemplate);
+            string Modals = LoadTemplate(SourceLocation + ModalTemplate);
 
             Console.WriteLine("\t> Loaded templates");
 
 
             for (int i = 0; i < Pages.Length; ++i)
             {
-                Console.WriteLine("\t> Working with: {0}", Pages[i]);
+                Console.Write("\t> Page: {0}     (working)", Pages[i]);
 
                 string PageTitle = Pages[i].Replace(".html", "");
                 string PageNav = NavBar;
@@ -87,31 +83,30 @@ namespace MPC
 
                 switch (PageTitle)
                 {
-                    case "index": { PageNav.Replace("id=\"Home\"", "id=\"Home_A\""); break; }
-                    case "worship": { PageNav.Replace("id=\"Worship\"", "id=\"Worship_A\""); break; }
-                    case "people": { PageNav.Replace("id=\"People\"", "id=\"People_A\""); break; }
-                    case "find": { PageNav.Replace("id=\"Contact\"", "id=\"Contact_A\""); break; }
-                    case "groups": { PageNav.Replace("id=\"Groups\"", "id=\"Groups_A\""); break; }
-                    case "future": { PageNav.Replace("id=\"Future\"", "id=\"Future_A\""); break; }
+                    case "index": { PageNav = PageNav.Replace("id=\"Home\"", "id=\"Home_A\""); break; }
+                    case "worship": { PageNav = PageNav.Replace("id=\"Worship\"", "id=\"Worship_A\""); break; }
+                    case "people": { PageNav = PageNav.Replace("id=\"People\"", "id=\"People_A\""); break; }
+                    case "find": { PageNav = PageNav.Replace("id=\"Contact\"", "id=\"Contact_A\""); break; }
+                   case "future": { PageNav = PageNav.Replace("id=\"Future\"", "id=\"Future_A\""); break; }
+
+                    //We need to do something special here and load in our modals for the Groups
+                    case "groups": { 
+                        PageNav = PageNav.Replace("id=\"Groups\"", "id=\"Groups_A\"");
+                        PageNav += Modals;
+                        break; }
+
+                    
                     default: break;
                 }
 
-                Console.WriteLine("\t \t> NavBar: DONE");
-
+                //Put the page together and save elsewhere
                 PageContent = Header + PageNav;
                 PageContent += LoadPage(SourceLocation + Pages[i]);
-                Console.WriteLine("\t \t> Page Content: DONE");
+                PageContent += Footer;
 
                 File.WriteAllText(PublishLocation + Pages[i], PageContent);
-                Console.WriteLine("\t \t> Page Complete!\n");
+                Console.Write("\r \t> Page: {0}     (DONE)                     \n", Pages[i]);
             }
-
-            //For each Page - format Nav with required ActiveLink
-                //Add Nav to Head
-                //Add Head to page
-                //Add footer to page
-                //Copy to publish folder
-
         }
 
 
@@ -119,7 +114,7 @@ namespace MPC
         //TODO - Do something
         private static void Clean(string[] cmd)
         {
-            Console.WriteLine("Nothing to clean.");
+            Console.WriteLine(">> Nothing to clean.");
         }
 
 
@@ -131,6 +126,7 @@ namespace MPC
             HeaderTemplate = s.Configs["Templates"].GetString("Header");
             FooterTemplate = s.Configs["Templates"].GetString("Footer");
             NavTemplate = s.Configs["Templates"].GetString("NavBar");
+            ModalTemplate = s.Configs["Templates"].GetString("Modal");
 
             //Where to Publish finished products
             PublishLocation = s.Configs["Sources"].GetString("Publish");
@@ -139,12 +135,7 @@ namespace MPC
             Pages = s.Configs["Sources"].GetString("Pages").Split(',');
             SourceLocation = s.Configs["Sources"].GetString("Source");
 
-            //Formatting tag
-            HeaderTag = s.Configs["Tags"].GetString("Head");
-            FooterTag = s.Configs["Tags"].GetString("Foot");
-            LinkTag = s.Configs["Tags"].GetString("Link");
-
-            Console.WriteLine("Configuration loaded!");
+            Console.WriteLine(">> Configuration loaded!");
         }
 
         //Returns a loaded Template from HTML
