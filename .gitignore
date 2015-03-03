@@ -48,26 +48,28 @@ Temporary Items
 # =========================
 
 #FOLDERS
+website/publish/
 
-_private/
+website/_private/
 bs/
-downloads/
-img/
+website/downloads/
+website/img/
 
 
 #RANDOM FILES
-devindex.html
-test.html
-test2.html
-testb.html
-TODO
-ChangeLog (Church Website)
+website/devindex.html
+website/test.html
+website/test2.html
+website/testb.html
+website/TODO
+website/ChangeLog (Church Website)
 
 #CSS
-css/test.css
-css/test2.css
-css/testb.css
+website/css/test.css
+website/css/test2.css
+website/css/testb.css
 
 #JS
-js/testb.js
+website/js/testb.js
 
+Changelog (Church Website)
