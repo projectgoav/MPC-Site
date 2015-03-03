@@ -48,7 +48,7 @@ Temporary Items
 # =========================
 
 #FOLDERS
-website/publish/
+publish/
 
 website/_private/
 bs/
@@ -73,3 +73,7 @@ website/css/testb.css
 website/js/testb.js
 
 Changelog (Church Website)
+
+*.suo
+bin/
+obj/
