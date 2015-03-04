@@ -1,0 +1,82 @@
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+
+# =========================
+# MPC FILES
+# =========================
+
+#FOLDERSs
+publish/
+
+website/_private/
+bs/
+website/downloads/
+website/img/
+
+
+#RANDOM FILES
+website/devindex.html
+website/test.html
+website/test2.html
+website/testb.html
+website/TODO
+website/ChangeLog (Church Website)
+
+#CSS
+website/css/test.css
+website/css/test2.css
+website/css/testb.css
+
+#JS
+website/js/testb.js
+
+Changelog (Church Website)
+
+*.suo
+bin/
+obj/
+MPC/MPC/Config.ini
+
+design/downloads/
