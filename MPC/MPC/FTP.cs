@@ -90,19 +90,14 @@ namespace MPC
 
             string UserPassword = "";
             string letter = Console.ReadKey(true).KeyChar.ToString();
+
             while (letter != "\r")
             {
                 if (letter == "\b")
                 {
-                    if (UserPassword.Length != 0)
-                    {
-                        UserPassword = UserPassword.Substring(0, UserPassword.Length - 1);
-                    }
+                    if (UserPassword.Length != 0) {  UserPassword = UserPassword.Substring(0, UserPassword.Length - 1);  }
                 }
-                else
-                {
-                    UserPassword += letter;
-                }
+                else  {  UserPassword += letter; }
 
                 letter = Console.ReadKey(true).KeyChar.ToString();
             }

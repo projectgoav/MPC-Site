@@ -16,8 +16,10 @@ namespace MPC
         public string ModalTemplate { get; set; }
 
         public string[] Pages { get; set; }
+        public string[] Folders { get; set; } 
 
         public string SourceLocation { get; set; }
+        public string DesignLocation { get; set; }
         public string PublishLocation { get; set; }
 
         public string Username { get; set; }

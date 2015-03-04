@@ -122,10 +122,14 @@ namespace MPC
                 Console.Write("\r> (DONE) Page: {0}                          \n", Config.Pages[i]);
             }
 
+            Console.Write("\n> (working) Copying design files...");
+            FileIO.CopyDesign(Config.DesignLocation, Config.Folders, Config.PublishLocation);
+            Console.Write("\r> (DONE) Copied design files          \n");
+
             DateTime Second = DateTime.Now;
             TimeSpan TimeTaken = Second - First;
 
-            Console.WriteLine("> Compiled {0} page(s) in {1}ms\n", Config.Pages.Length, TimeTaken.TotalMilliseconds);
+            Console.WriteLine("\n> Compiled {0} page(s) in {1}ms\n", Config.Pages.Length, TimeTaken.TotalMilliseconds);
         }
 
 

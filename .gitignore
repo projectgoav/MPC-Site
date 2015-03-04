@@ -47,7 +47,7 @@ Temporary Items
 # MPC FILES
 # =========================
 
-#FOLDERS
+#FOLDERSs
 publish/
 
 website/_private/
@@ -78,4 +78,5 @@ Changelog (Church Website)
 bin/
 obj/
 MPC/MPC/Config.ini
-MPC/MPC/Config.ini
+
+design/downloads/
