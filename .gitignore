@@ -77,3 +77,5 @@ Changelog (Church Website)
 *.suo
 bin/
 obj/
+MPC/MPC/Config.ini
+MPC/MPC/Config.ini
