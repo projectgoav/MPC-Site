@@ -19,5 +19,7 @@ namespace MPC
 
         public string SourceLocation { get; set; }
         public string PublishLocation { get; set; }
+
+        public string Username { get; set; }
     }
 }

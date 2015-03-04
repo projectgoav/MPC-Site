@@ -40,6 +40,8 @@ namespace MPC
                 cfg.Pages = s.Configs["Sources"].GetString("Pages").Split(',');
                 cfg.SourceLocation = s.Configs["Sources"].GetString("Source");
 
+                cfg.Username = s.Configs["FTP"].GetString("Username");
+
                 Console.WriteLine(">> Configuration loaded!");
 
                 return cfg;

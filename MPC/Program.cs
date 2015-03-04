@@ -57,6 +57,12 @@ namespace MPC
                     {
                         case "compile": { Compile(null); break; }
                         case "clean": { Clean(cmd); break; }
+                        case "publish":
+                            {
+                                FTP ftp = new FTP(Config.Username);
+                                ftp.Publish(Config.PublishLocation, Config.Pages.Length);
+                                break;
+                            }
                     }
                 }
 
@@ -119,7 +125,7 @@ namespace MPC
             DateTime Second = DateTime.Now;
             TimeSpan TimeTaken = Second - First;
 
-            Console.WriteLine("> Compiled {0} page(s) in {1}ms", Config.Pages.Length, TimeTaken.TotalMilliseconds);
+            Console.WriteLine("> Compiled {0} page(s) in {1}ms\n", Config.Pages.Length, TimeTaken.TotalMilliseconds);
         }
 
 
